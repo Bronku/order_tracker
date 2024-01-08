@@ -28,7 +28,12 @@
                     <th>Delivery</th>
                     <th>Phone</th>
                     <th>Price</th>
-                    <th>Date</th>
+                    <th x-data = "{show: false, date:''}" >
+                        <span x-on:click="show = !show">Date</span>
+                        <div x-show = "show" style = "position:absolute; background-color: bisque;">
+                            <input type = "date" x-model = "date" x-on:change="filter_orders(date)">
+                        </div>
+                    </th>
                     <th>Status</th>
                     <th>Additional info</th>
                     <th>Contents</th>
@@ -151,6 +156,9 @@
                             <li>
                                 <button x-on:click.prevent = "add_cake(cake)">add</button>
                                 <span x-text="cake.name"></span>
+                                <span> - </span>
+                                <span x-text="cake.price"></span>
+                                <span>zł</span>
                             </li>
                         </template>
                     </div>

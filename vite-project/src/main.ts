@@ -52,8 +52,8 @@ function get_price(order: Order){
 const pb = new PocketBase('http://127.0.0.1:8090');
 await pb.collection('users').authWithPassword('user1@admin.com', 'secretsecret');
 
-async function get_orders(){
-    const response = await pb.collection('cake_orders').getFullList();
+async function get_orders(filter:string =  ''){
+    const response = await pb.collection('cake_orders').getFullList({filter:filter});
     let out: Order[] = [];
     response.forEach((e)=>{
         out.push({
@@ -110,7 +110,8 @@ document.addEventListener('alpine:init', async () => {
         page: 'view',
         routes: [
             { name: 'view', path: 'view' },
-            { name: 'edit', path: 'edit' }
+            { name: 'edit', path: 'edit' },
+            { name: 'summary', path: 'summary'}
         ],
         
         orders: [] as Order[],
@@ -123,6 +124,13 @@ document.addEventListener('alpine:init', async () => {
         edit_order(order: Order){
             this.current_order = order;
             this.page = 'edit';
+        },
+        async filter_orders(date:string){
+            const filter = pb.filter("date = {:date}",{date:date});
+            if (date != '')
+                this.orders = await get_orders(filter);
+            else 
+                this.orders = await get_orders();
         },
 
         
@@ -143,9 +151,12 @@ document.addEventListener('alpine:init', async () => {
             this.current_order.price = get_price(this.current_order);
         },
         async save_order(){
-            upload_order(JSON.parse(JSON.stringify(this.current_order)));
+            await upload_order(JSON.parse(JSON.stringify(this.current_order)));
+            if(this.current_order.id != null)
+                this.page = 'view';
             this.current_order = new_order();
             this.orders = await get_orders();
+            console.log("orders updated");
         },
         clear_form(){
             this.current_order = new_order();
@@ -153,6 +164,7 @@ document.addEventListener('alpine:init', async () => {
         async delete_order(order: Order){
             await remove_order(order);
             this.orders = await get_orders();
+            console.log("orders updated");
         },
         
 
