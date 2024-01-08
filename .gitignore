@@ -1,2 +1,4 @@
 .vscode/*
+/pocketbase/pb_data/*
 /pocketbase/pb_data/
+
