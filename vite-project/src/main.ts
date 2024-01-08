@@ -1,5 +1,6 @@
 import Alpine from 'alpinejs';
 import PocketBase from 'pocketbase';
+import './style.css';
 
 //ts, buiseness logic
 type Cake = {
