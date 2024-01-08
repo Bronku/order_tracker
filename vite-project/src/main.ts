@@ -110,12 +110,11 @@ document.addEventListener('alpine:init', async () => {
         page: 'view',
         routes: [
             { name: 'view', path: 'view' },
-            { name: 'edit', path: 'edit' },
-            { name: 'summary', path: 'summary'}
+            { name: 'edit', path: 'edit' }
         ],
         
         orders: [] as Order[],
-        cakes: [] as Cake[],
+        cakes: [] as {cake : Cake, sum: number}[],
         current_order: {} as Order,
         current_oake: {} as Cake,
 
@@ -125,12 +124,35 @@ document.addEventListener('alpine:init', async () => {
             this.current_order = order;
             this.page = 'edit';
         },
-        async filter_orders(date:string){
+        async update_orders(filter:string = ''){
+            await get_cakes().then((e)=>{
+                this.cakes = e.map((e)=>{return {cake: e, sum: 0}});
+            })
+            if (filter == '')
+                await get_orders().then((e)=>{
+                    this.orders = e;
+                    e.forEach((order)=>{
+                        order.contents.forEach((cake)=>{
+                            this.cakes.find(e=>e.cake.id == cake.cake.id)!.sum += +cake.quantity;
+                        })
+                    })
+                })
+            else
+                await get_orders(filter).then((e)=>{
+                    this.orders = e;
+                    e.forEach((order)=>{
+                        order.contents.forEach((cake)=>{
+                            this.cakes.find(e=>e.cake.id == cake.cake.id)!.sum += +cake.quantity;
+                        })
+                    })
+                })
+        },
+        filter_orders(date:string){
             const filter = pb.filter("date = {:date}",{date:date});
             if (date != '')
-                this.orders = await get_orders(filter);
+                this.update_orders(filter);
             else 
-                this.orders = await get_orders();
+                this.update_orders();
         },
 
         
@@ -155,7 +177,7 @@ document.addEventListener('alpine:init', async () => {
             if(this.current_order.id != null)
                 this.page = 'view';
             this.current_order = new_order();
-            this.orders = await get_orders();
+            await this.update_orders();
             console.log("orders updated");
         },
         clear_form(){
@@ -171,8 +193,7 @@ document.addEventListener('alpine:init', async () => {
         //init
         async init(){
             this.current_order = new_order();
-            this.orders = await get_orders();
-            this.cakes = await get_cakes();
+            this.update_orders();
             console.log("Data initialised");
         }
     }));

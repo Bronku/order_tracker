@@ -19,59 +19,81 @@
     </nav>
     <template x-if = "page === 'view'">
         <main>
-            <h2>View</h2>
-            <table style = "table-layout: fixed;width: 100%;">
-                <tr>
-                    <th>id</th>
-                    <th>Name</th>
-                    <th>Surname</th>
-                    <th>Delivery</th>
-                    <th>Phone</th>
-                    <th>Price</th>
-                    <th x-data = "{show: false, date:''}" >
-                        <span x-on:click="show = !show">Date</span>
-                        <div x-show = "show" style = "position:absolute; background-color: bisque;">
-                            <input type = "date" x-model = "date" x-on:change="filter_orders(date)">
-                        </div>
-                    </th>
-                    <th>Status</th>
-                    <th>Additional info</th>
-                    <th>Contents</th>
-                    <th>Actions</th>
-                </tr>
-                <template x-for = "order in orders" :key = "order.id">
-                    <tr style = "vertical-align:top">
-                        <td x-text = "order.id"></td>
-                        <td x-text = "order.name"></td>
-                        <td x-text = "order.surname"></td>
-                        <td x-text = "order.delivery === 'dostawa' ? order.address : order.delivery"></td>
-                        <td x-text = "order.phone"></td>
-                        <td x-text = "order.price"></td>
-                        <td x-text = "order.date"></td>
-                        <td x-text = "order.status"></td>
-                        <td x-text = "order.additional_info"></td>
-                        <td x-data = "{show: false}">
-                            <button x-on:click.prevent = "show = !show">expand</button>
-                            <div x-show="show">
-                                <template x-for = "item in order.contents" :key="item.cake.id">
-                                    <li>
-                                        <span x-text = "item.cake.name"></span>
-                                        <span x-text = "item.cake.price"></span>
-                                        <span x-text = "item.quantity"></span>
-                                    </li>
-                                </template>
+            <div>
+                <h2>View</h2>
+                <table style = "table-layout: fixed;width: 100%;">
+                    <tr>
+                        <th>id</th>
+                        <th>Name</th>
+                        <th>Surname</th>
+                        <th>Delivery</th>
+                        <th>Phone</th>
+                        <th>Price</th>
+                        <th x-data = "{show: false, date:''}" >
+                            <span x-on:click="show = !show">Date</span>
+                            <div x-show = "show" style = "position:absolute; background-color: bisque;">
+                                <input type = "date" x-model = "date" x-on:change="filter_orders(date)">
                             </div>
-                        </td>
-                        <td x-data = "{show: false}">
-                            <button x-on:click.prevent = "show = !show">...</button>
-                            <div x-show="show">
-                                <button x-on:click.prevent = "edit_order(order)">edit</button>
-                                <button x-on:click.prevent = "delete_order(order)">delete</button>
-                            </div>
-                        </td>
+                        </th>
+                        <th>Status</th>
+                        <th>Additional info</th>
+                        <th>Contents</th>
+                        <th>Actions</th>
                     </tr>
-                </template>
-            </table>
+                    <template x-for = "order in orders" :key = "order.id">
+                        <tr style = "vertical-align:top">
+                            <td x-text = "order.id"></td>
+                            <td x-text = "order.name"></td>
+                            <td x-text = "order.surname"></td>
+                            <td x-text = "order.delivery === 'dostawa' ? order.address : order.delivery"></td>
+                            <td x-text = "order.phone"></td>
+                            <td x-text = "order.price"></td>
+                            <td x-text = "order.date"></td>
+                            <td x-text = "order.status"></td>
+                            <td x-text = "order.additional_info"></td>
+                            <td x-data = "{show: false}">
+                                <button x-on:click.prevent = "show = !show">expand</button>
+                                <div x-show="show">
+                                    <template x-for = "item in order.contents" :key="item.cake.id">
+                                        <li>
+                                            <span x-text = "item.cake.name"></span>
+                                            <span x-text = "item.cake.price"></span>
+                                            <span x-text = "item.quantity"></span>
+                                        </li>
+                                    </template>
+                                </div>
+                            </td>
+                            <td x-data = "{show: false}">
+                                <button x-on:click.prevent = "show = !show">...</button>
+                                <div x-show="show">
+                                    <button x-on:click.prevent = "edit_order(order)">edit</button>
+                                    <button x-on:click.prevent = "delete_order(order)">delete</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </template>
+                </table>
+            </div>
+            <div>
+                <h2>Summary</h2>
+                <table>
+                    <tr>
+                        <th>id</th>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                    </tr>
+                    <template x-for = "cake in cakes" :key = "cake.cake.id">        
+                        <tr>
+                            <td x-text = "cake.cake.id"></td>
+                            <td x-text = "cake.cake.name"></td>
+                            <td x-text = "cake.cake.price"></td>
+                            <td x-text = "cake.sum"></td>
+                        </tr>
+                    </template>
+                </table>
+
+            </div>
         </main>
     </template>
     <template x-if = "page === 'edit'">
@@ -152,12 +174,12 @@
                 <div x-data = "{show : false}">
                     <button x-on:click.prevent = "show = !show">expand available cakes</button>
                     <div x-show="show">
-                        <template x-for = "cake in cakes" :key = "cake.id">
+                        <template x-for = "cake in cakes" :key = "cake.cake.id">
                             <li>
-                                <button x-on:click.prevent = "add_cake(cake)">add</button>
-                                <span x-text="cake.name"></span>
+                                <button x-on:click.prevent = "add_cake(cake.cake)">add</button>
+                                <span x-text="cake.cake.name"></span>
                                 <span> - </span>
-                                <span x-text="cake.price"></span>
+                                <span x-text="cake.cake.price"></span>
                                 <span>zł</span>
                             </li>
                         </template>
