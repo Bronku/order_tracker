@@ -110,8 +110,9 @@ document.addEventListener('alpine:init', async () => {
     Alpine.data('main',()=>({
         page: 'view',
         routes: [
-            { name: 'view', path: 'view' },
-            { name: 'edit', path: 'edit' }
+            { name: 'Zamówienia ciast', path: 'view', icon: 'cake'},
+            { name: 'edit', path: 'edit' , icon: 'edit'},
+            { name: 'Podsumowanie', path: 'summary', icon: 'list-check'}
         ],
         
         orders: [] as Order[],
