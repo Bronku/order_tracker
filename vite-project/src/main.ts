@@ -111,20 +111,21 @@ document.addEventListener('alpine:init', async () => {
         page: 'view',
         routes: [
             { name: 'Zamówienia ciast', path: 'view', icon: 'cake'},
-            { name: 'edit', path: 'edit' , icon: 'edit'},
+            { name: 'Edycja zamówień', path: 'edit' , icon: 'edit'},
             { name: 'Podsumowanie', path: 'summary', icon: 'list-check'}
         ],
+        overlay: false,
         
         orders: [] as Order[],
         cakes: [] as {cake : Cake, sum: number}[],
         current_order: {} as Order,
         current_oake: {} as Cake,
 
-
+        
         //view actions
         edit_order(order: Order){
-            this.current_order = order;
             this.page = 'edit';
+            this.overlay = false;
         },
         async update_orders(filter:string = ''){
             await get_cakes().then((e)=>{
@@ -187,8 +188,23 @@ document.addEventListener('alpine:init', async () => {
         },
         async delete_order(order: Order){
             await remove_order(order);
-            this.orders = await get_orders();
+            this.current_order = new_order();
+            await this.update_orders();
+            this.overlay = false;
             console.log("orders updated");
+        },
+
+
+
+        //overlay actions
+        hide_overlay(){
+            this.overlay = false;
+            this.current_order = new_order();
+        },
+        open_overlay(order: Order){
+            this.overlay = true;
+            this.current_order = order;
+            console.log(this.current_order)
         },
         
 
