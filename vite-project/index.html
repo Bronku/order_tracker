@@ -9,17 +9,24 @@
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
 </head>
 <body x-data = "main">
-    <nav>
-        <template x-for = "item in routes">
-            <a class = "nav-button" x-bind:class="item.path == page && 'selected-nav-button'" x-bind:title="item.name" x-on:click.prevent = "page = item.path">
-                <box-icon x-bind:name="item.icon"></box-icon>
-            </a>
-        </template>
-    </nav>
+    <aside>
+        <nav>
+            <template x-for = "item in routes" >
+                <a class = "nav-button" x-bind:class="item.path == page && 'selected-nav-button'" x-bind:title="item.name" x-on:click.prevent = "page = item.path">
+                    <box-icon x-bind:name="item.icon"></box-icon>
+                </a>
+            </template>
+        </nav>
+        <a class = "nav-button" x-on:click.prevent = "logout()">
+            <box-icon name='log-out'></box-icon>
+        </a>
+    </aside>
     <div class="app-body">
-        <header>
-            <h1 x-text = "routes.find(e=>e.path == page).name"></h1>
-        </header>
+        <template x-if = "page != 'login'">
+            <header>
+                <h1 x-text = "routes.find(e=>e.path == page).name"></h1>
+            </header>
+        </template>
         <main x-show = "page === 'view'">
             <table>
                 <thead>
@@ -164,72 +171,89 @@
                     </div>
             </form>
         </main>
-        <div x-show = "overlay" 
-            class = "overlay-background" 
-            x-on:click.prevent="hide_overlay()"
-            x-cloak
-            x-transition.opacity></div>
-        <div class = "overlay"
-            x-show = "overlay && page === 'view' && current_order.id !== null"
-            x-transition:enter = "ease-out"
-            x-transition:enter-start = "move-right"
-            x-transition:leave = "ease-in"
-            x-transition:leave-end="move-right">
-            <header>
-                <a class = "nav-button" x-on:click.prevent = "hide_overlay()"><box-icon name='x'></box-icon></a>
-                <h2><span x-text = "current_order.id"></span></h2>
-            </header>
-            <main>
-                <div class = "main-info">
-                    <div class = "text-info">
-                        <h3>Imię</h3>
-                        <span x-text = "current_order.name"></span>
-                    </div>
-                    <div class = "text-info">
-                        <h3>Nazwisko</h3>
-                        <span x-text = "current_order.surname"></span>
-                    </div>
-                    <div class = "text-info">
-                        <h3>Dostawa</h3>
-                        <span x-text = "current_order.delivery === 'dostawa' ? current_order.address : current_order.delivery"></span>
-                    </div>
-                    <div class = "text-info">
-                        <h3>Numer kontaktowy</h3>
-                        <span x-text = "current_order.phone"></span>
-                    </div>
-                    <div class = "text-info">
-                        <h3>Do zapłaty</h3>
-                        <span x-text = "current_order.price"></span>
-                    </div>
-                    <div class = "text-info">
-                        <h3>Data odbioru</h3>
-                        <span x-text = "current_order.date"></span>
-                    </div>
-                    <div class = "text-info">
-                        <h3>Status</h3>
-                        <span x-text = "current_order.status"></span>
-                    </div>
-                    <div class = "text-info">
-                        <h3>Dodatkowe informacje</h3>
-                        <span x-text = "current_order.additional_info"></span>
-                    </div>
-                </div>
-                <div class = "order-contents" x-show = "current_order.cakes != null">
-                    <template x-for="item in current_order.cakes">
-                        <div class = "cake-info">
-                            <h3 x-text = "item.name"></h3>
-                            <span>
-                                <span x-text = "item.quantity"></span>
-                                <span>szt.</span>
-                            </span>
-                        </div>
-                    </template>
-                </div>
-            </main>
-            <footer>
-                <a class = "nav-button"  x-on:click.prevent = "edit_order(current_order)"><box-icon name='edit'></box-icon></a>
-                <a class = "nav-button" x-on:click.prevent = "delete_order(current_order)"><box-icon name='trash' ></box-icon></a>
-            </footer>
-        </div>
     </div>
+    <div x-show = "overlay" class = "overlay-background" x-on:click.prevent="hide_overlay()" x-cloak x-transition.opacity></div>
+    <div class = "overlay"
+        x-show = "overlay && page === 'view' && current_order.id !== null"
+        x-transition:enter = "ease-out"
+        x-transition:enter-start = "move-right"
+        x-transition:leave = "ease-in"
+        x-transition:leave-end="move-right">
+        <header>
+            <a class = "nav-button" x-on:click.prevent = "hide_overlay()"><box-icon name='x'></box-icon></a>
+            <h2><span x-text = "current_order.id"></span></h2>
+        </header>
+        <main>
+            <div class = "main-info">
+                <div class = "text-info">
+                    <h3>Imię</h3>
+                    <span x-text = "current_order.name"></span>
+                </div>
+                <div class = "text-info">
+                    <h3>Nazwisko</h3>
+                    <span x-text = "current_order.surname"></span>
+                </div>
+                <div class = "text-info">
+                    <h3>Dostawa</h3>
+                    <span x-text = "current_order.delivery === 'dostawa' ? current_order.address : current_order.delivery"></span>
+                </div>
+                <div class = "text-info">
+                    <h3>Numer kontaktowy</h3>
+                    <span x-text = "current_order.phone"></span>
+                </div>
+                <div class = "text-info">
+                    <h3>Do zapłaty</h3>
+                    <span x-text = "current_order.price"></span>
+                </div>
+                <div class = "text-info">
+                    <h3>Data odbioru</h3>
+                    <span x-text = "current_order.date"></span>
+                </div>
+                <div class = "text-info">
+                    <h3>Status</h3>
+                    <span x-text = "current_order.status"></span>
+                </div>
+                <div class = "text-info">
+                    <h3>Dodatkowe informacje</h3>
+                    <span x-text = "current_order.additional_info"></span>
+                </div>
+            </div>
+            <div class = "order-contents" x-show = "current_order.cakes != null">
+                <template x-for="item in current_order.cakes">
+                    <div class = "cake-info">
+                        <h3 x-text = "item.name"></h3>
+                        <span>
+                            <span x-text = "item.quantity"></span>
+                            <span>szt.</span>
+                        </span>
+                    </div>
+                </template>
+            </div>
+        </main>
+        <footer>
+            <a class = "nav-button"  x-on:click.prevent = "edit_order(current_order)"><box-icon name='edit'></box-icon></a>
+            <a class = "nav-button" x-on:click.prevent = "delete_order(current_order)"><box-icon name='trash' ></box-icon></a>
+        </footer>
+    </div>
+    <template x-if = "page === 'login'">
+        <main class = "login-screen">
+            <form>
+                <header>
+                    <h1>Logowanie</h1>
+                </header>
+                <div>
+                    <label for="login">Login</label>
+                    <input type="text" name="login" id="login" x-model = "user">
+                </div>
+                <div>
+                    <label for="password">Password</label>
+                    <input type="password" name="password" id="password" x-model = "password">
+                </div>
+                <div>
+                    <button x-on:click.prevent = "login()">login</button>
+                </div>
+            </form>
+        </main>
+    </template>
+</body>
 </html>

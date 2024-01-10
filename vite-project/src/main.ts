@@ -5,7 +5,7 @@ import {Order, Cake, get_price, new_order} from './types.ts';
 import { get_orders, upload_order, remove_order, get_cakes} from './database.ts';
 import { pbAdress } from './constants.ts';
 
-const pb = new PocketBase(pbAdress);
+let pb: PocketBase;
 
 Alpine.data('main',()=>({   
     page: 'view',
@@ -85,16 +85,45 @@ Alpine.data('main',()=>({
     },
     
 
-    //init
-    async init(){
-//await pb.authStore.clear();
-//console.log(pb.authStore.isValid);
-//await pb.collection('users').authWithPassword('user1@admin.com', 'secretsecret');
-        await pb.collection('users').authWithPassword('Bronkuu','password');
+    //auth actions
+    user : '',
+    password: '',
+    async login(){
+        await pb.authStore.clear();
+        await pb.collection('users').authWithPassword(this.user,this.password);
+        this.user = '';
+        this.password = '';
+        this.page = 'view';
+        this.update_orders();
+    },
+    async logout(){
+        await pb.authStore.clear();
+        this.page = 'login';
+    },
 
+
+
+    async init(){
+        //await pb.collection('users').authWithPassword('user1@admin.com', 'secretsecret')
+        //await pb.collection('users').authWithPassword('Bronkuu','password');
+
+        pb = new PocketBase(pbAdress);
+        
+        pb.afterSend = ( (response, data) => {
+            if (response.status === 401)
+                this.page = 'login';
+            if (response.status === 400)
+                alert('Niepoprawne dane');
+            return data;
+        });
+
+        if (!window.localStorage.getItem('pocketbase_auth')){
+            this.page = 'login';
+            return
+        }
+    
         this.current_order = new_order();
         this.update_orders();
-        console.log("Data initialised");
     }
 }));
 
