@@ -37,10 +37,10 @@ export function new_order(){
     }
 }
 export function get_price(order: Order){
-    let price = 0;
-    order.cakes.forEach((cake)=>{
+    if (order.cakes==null)
+        return 0
+    let price = -1 * order.advance;
+    for (const cake of order.cakes)
         price += cake.price * cake.quantity;
-    });
-    price -= order.advance;
     return price;
 }
