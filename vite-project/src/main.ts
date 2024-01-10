@@ -51,6 +51,8 @@ function get_price(order: Order){
 
 //pb 
 const pb = new PocketBase('http://127.0.0.1:8090');
+//await pb.authStore.clear();
+//console.log(pb.authStore.isValid);
 await pb.collection('users').authWithPassword('user1@admin.com', 'secretsecret');
 
 async function get_orders(filter:string =  ''){
@@ -123,7 +125,7 @@ document.addEventListener('alpine:init', async () => {
 
         
         //view actions
-        edit_order(order: Order){
+        edit_order(_order: Order){
             this.page = 'edit';
             this.overlay = false;
         },

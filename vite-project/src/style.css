@@ -20,6 +20,8 @@ h1{
 }
 h3{
     font-weight:400;
+    font-size: small;
+    text-align: center;
 }
 
 body{
@@ -153,6 +155,7 @@ table > * > tr > *:last-child{
 table > tbody > tr:hover{
     background-color: var(--hover-color);
     box-shadow: 0px 0px 1px 1px rgba(0,0,0,0.1) inset;
+    transition: var(--transition-duration);
 }
 
 table > tbody > tr > td{
@@ -231,6 +234,7 @@ table > tbody > tr > td{
 .cake-info:hover{
     background-color: var(--hover-color);
     box-shadow: 0px 0px 1px 1px rgba(0,0,0,0.1) inset;
+    transition: var(--transition-duration);
 }
 
 .cake-info:last-child{
@@ -271,6 +275,7 @@ table > tbody > tr > td{
 
 .main-info > *:hover{
     box-shadow: 0px 0px 1px 1px rgba(0,0,0,0.1);
+    transition: var(--transition-duration);
 }
 
 .text-info > span {
@@ -279,7 +284,7 @@ table > tbody > tr > td{
 
 .text-info > h3{
     margin: 0;
-    padding: 0;
+    padding: 0.2rem;
 }
 
 .order-contents{
@@ -289,6 +294,13 @@ table > tbody > tr > td{
 
 .order-contents:hover{
     box-shadow: none;
+}
+
+.text-info {
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    justify-content: space-between;
 }
 
 
