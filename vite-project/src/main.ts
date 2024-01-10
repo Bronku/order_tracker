@@ -53,7 +53,9 @@ function get_price(order: Order){
 const pb = new PocketBase('http://127.0.0.1:8090');
 //await pb.authStore.clear();
 //console.log(pb.authStore.isValid);
-await pb.collection('users').authWithPassword('user1@admin.com', 'secretsecret');
+//await pb.collection('users').authWithPassword('user1@admin.com', 'secretsecret');
+await pb.collection('users').authWithPassword('Bronkuu','password');
+
 
 async function get_orders(filter:string =  ''){
     const response = await pb.collection('cake_orders').getFullList({filter:filter});
@@ -122,6 +124,14 @@ document.addEventListener('alpine:init', async () => {
         cakes: [] as {cake : Cake, sum: number}[],
         current_order: {} as Order,
         current_oake: {} as Cake,
+
+
+        async auth(){
+
+            //pb.afterSend = function (response, data){
+                //console.log(response);
+                //console.log(data);}
+        },
 
         
         //view actions
@@ -212,6 +222,7 @@ document.addEventListener('alpine:init', async () => {
 
         //init
         async init(){
+            await this.auth();
             this.current_order = new_order();
             this.update_orders();
             console.log("Data initialised");
