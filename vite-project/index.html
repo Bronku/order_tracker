@@ -6,7 +6,6 @@
     <link rel="shortcut icon" href="#">
     <title>Document</title>
     <script type = "module" defer src="/src/main.ts"></script>
-    <script type = "module" defer src="/src/database.ts"></script>
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
 </head>
 <body x-data = "main">
@@ -31,13 +30,7 @@
                             <th><span>Dostawa</span></th>
                             <th><span>Numer kontaktowy</span></th>
                             <th><span>Do zapłaty</span></th>
-                            <th x-data = "{show: false, date:''}" x-on:click.outside="show=false">
-                                <div x-on:click="show = !show">
-                                    <span x-show="!show  && date == ''">Data odbioru</span>
-                                    <span x-show="!show  && date != ''" x-text="date"></span>
-                                </div>
-                                <input x-show = "show" type = "date" x-model = "date" x-on:change="filter_orders(date)">
-                            </th>
+                            <th><span>Data</span></th>
                             <th><span>Status</span></th>
                             <th><span>Dodatkowe informacje</span></th>
                         </tr>
@@ -62,20 +55,20 @@
         <template x-if = "page === 'summary'">
             <main>
                 <table>
-                                    <thead>
-                                        <tr>
-                                            <th><span>Ciasto</span></th>
-                                            <th><span>Zamówiona Ilość</span></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <template x-for = "cake in cakes" :key = "cake.cake.id">
-                                            <tr :title = "cake.cake.id">
-                                                <td x-text = "cake.cake.name"></td>
-                                                <td x-text = "cake.sum"></td>
-                                            </tr>
-                                        </template>
-                                    </tbody>
+                    <thead>
+                        <tr>
+                            <th><span>Ciasto</span></th>
+                            <th><span>Zamówiona Ilość</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template x-for = "cake in summary" :key = "cake.id">
+                            <tr :title = "cake.id">
+                                <td x-text = "cake.name"></td>
+                                <td x-text = "cake.quantity"></td>
+                            </tr>
+                        </template>
+                    </tbody>
                 </table>
             </main>
         </template>
@@ -83,102 +76,101 @@
             <main>
                 <form x-effect = "update_price(current_order)">
                     <div>
-                    <div>
-                        <label for="name">Name</label>
-                        <input type="text" name="name" id="name" x-model = "current_order.name">
-                    </div>
-                
-                    <div>
-                        <label for="surname">Surname</label>
-                        <input type="text" name="surname" id="surname" x-model = "current_order.surname">
-                    </div>
-                    <div>
-                        <label for="delivery">Delivery</label>
-                        <select name="delivery" id="delivery" x-model = "current_order.delivery">
-                            <option value="kartuzy">Kartuzy</option>
-                            <option value="somonino">Somonino</option>
-                            <option value="dostawa">Dostawa</option>
-                        </select>
-                    </div>
-                
-                    <div x-show = "current_order.delivery === 'dostawa'">
-                        <label for="address">Address</label>
-                        <input type="text" name="address" id="address" x-model = "current_order.address">
-                    </div>
-                
-                    <div>
-                        <label for="phone">Phone</label>
-                        <input type="text" name="phone" id="phone" x-model = "current_order.phone">
-                    </div>
-                
-                    <div>
-                        <label for = "advance" >Advance</label>
-                        <input type = "text" name = "advance" id = "advance" x-model = "current_order.advance">
-                    </div>
-                
-                    <div>
-                        <label for = "status" >Status</label>
-                        <select name = "status" id = "status" x-model = "current_order.status">
-                            <option value = "zamówione" >Zamówione</option>
-                            <option value = "w trakcie" >W trakcie</option>
-                            <option value = "gotowe" >Gotowe</option>
-                            <option value = "odebrane" >Odebrane</option>
-                        </select>
-                    </div>
-                
-                    <div>
-                        <label for = "date" >Date</label>
-                        <input type = "date" name = "date" id = "date" x-model = "current_order.date">
-                    </div>
-                
-                    <div>
-                        <label for = "additional_info" >Additional info</label>
-                        <input type = "text" name = "additional_info" id = "additional_info" x-model = "current_order.additional_info">
-                    </div>
-                
+                        <div>
+                            <label for="name">Name</label>
+                            <input type="text" name="name" id="name" x-model = "current_order.name">
+                        </div>
                     
+                        <div>
+                            <label for="surname">Surname</label>
+                            <input type="text" name="surname" id="surname" x-model = "current_order.surname">
+                        </div>
+                        <div>
+                            <label for="delivery">Delivery</label>
+                            <select name="delivery" id="delivery" x-model = "current_order.delivery">
+                                <option value="kartuzy">Kartuzy</option>
+                                <option value="somonino">Somonino</option>
+                                <option value="dostawa">Dostawa</option>
+                            </select>
+                        </div>
                     
+                        <div x-show = "current_order.delivery === 'dostawa'">
+                            <label for="address">Address</label>
+                            <input type="text" name="address" id="address" x-model = "current_order.address">
+                        </div>
                     
-                    <div>
-                        <span>Total price: </span>
-                        <span x-text = "current_order.price"></span>
-                        <span>zł</span>
-                        <button x-on:click.prevent = "save_order()">save</button>
-                        <button x-on:click.prevent = "clear_form()">clear</button>
-                    </div>
-                    </div>
-                    <div>
-                        <template x-for ="item in current_order.contents" :key="item.cake.id">
-                            <li>
-                                <label :for = "$id('quantity', item.cake.id)">
-                                    <span x-text = "item.cake.name"></span>
-                                    <span> - </span>
-                                    <span x-text = "item.cake.price"></span>
-                                    <span>zł, total: </span>
-                                    <span x-text = "item.cake.price * item.quantity"></span>
-                                    <span>zł</span>
-                                </label>
-                                <input type = "text" name = "quantity" :id = "$id('quantity', item.cake.id)" x-model = "item.quantity">
-                                <button x-on:click.prevent = "remove_cake(item.cake)">remove</button>
-                            </li>
-                        </template>
-                    </div>
-                    <div x-data = "{show : false}">
-                        
-                        <button x-on:click.prevent = "show = !show">expand available cakes</button>
-                        <div x-show="show">
-                            <template x-for = "cake in cakes" :key = "cake.cake.id">
+                        <div>
+                            <label for="phone">Phone</label>
+                            <input type="text" name="phone" id="phone" x-model = "current_order.phone">
+                        </div>
+                    
+                        <div>
+                            <label for = "advance" >Advance</label>
+                            <input type = "text" name = "advance" id = "advance" x-model = "current_order.advance">
+                        </div>
+                    
+                        <div>
+                            <label for = "status" >Status</label>
+                            <select name = "status" id = "status" x-model = "current_order.status">
+                                <option value = "zamówione" >Zamówione</option>
+                                <option value = "w trakcie" >W trakcie</option>
+                                <option value = "gotowe" >Gotowe</option>
+                                <option value = "odebrane" >Odebrane</option>
+                            </select>
+                        </div>
+                    
+                        <div>
+                            <label for = "date" >Date</label>
+                            <input type = "date" name = "date" id = "date" x-model = "current_order.date">
+                        </div>
+                    
+                        <div>
+                            <label for = "additional_info" >Additional info</label>
+                            <input type = "text" name = "additional_info" id = "additional_info" x-model = "current_order.additional_info">
+                        </div>
+                    
+
+
+
+                        <div>
+                            <span>Total price: </span>
+                            <span x-text = "current_order.price"></span>
+                            <span>zł</span>
+                            <button x-on:click.prevent = "save_order()">save</button>
+                            <button x-on:click.prevent = "clear_order()">clear</button>
+                        </div>
+                        </div>
+                        <div>
+                            <template x-for ="item in current_order.cakes" :key="item.id">
                                 <li>
-                                    <button x-on:click.prevent = "add_cake(cake.cake)">add</button>
-                                    <span x-text="cake.cake.name"></span>
-                                    <span> - </span>
-                                    <span x-text="cake.cake.price"></span>
-                                    <span>zł</span>
+                                    <label :for = "$id('quantity', item.id)">
+                                        <span x-text = "item.name"></span>
+                                        <span> - </span>
+                                        <span x-text = "item.price"></span>
+                                        <span>zł, total: </span>
+                                        <span x-text = "item.price * item.quantity"></span>
+                                        <span>zł</span>
+                                    </label>
+                                    <input type = "text" name = "quantity" :id = "$id('quantity', item.id)" x-model = "item.quantity">
+                                    <button x-on:click.prevent = "remove_cake(item)">remove</button>
                                 </li>
                             </template>
                         </div>
-                    </div>
-                
+                        <div x-data = "{show : false}">
+
+                            <button x-on:click.prevent = "show = !show">expand available cakes</button>
+                            <div x-show="show">
+                                <template x-for = "cake in cakes" :key = "cake.id">
+                                    <li>
+                                        <button x-on:click.prevent = "add_cake(cake)">add</button>
+                                        <span x-text="cake.name"></span>
+                                        <span> - </span>
+                                        <span x-text="cake.price"></span>
+                                        <span>zł</span>
+                                    </li>
+                                </template>
+                            </div>
+                        </div>
                 </form>
             </main>
         </template>
@@ -233,9 +225,9 @@
                                 </div>
                                 <div class = "main-info">
                                     <div class = "order-contents">
-                                        <template x-for="item in current_order.contents">
+                                        <template x-for="item in current_order.cakes">
                                             <div class = "cake-info">
-                                                <h3 x-text = "item.cake.name"></h3>
+                                                <h3 x-text = "item.name"></h3>
                                                 <span>
                                                     <span x-text = "item.quantity"></span>
                                                     <span>szt.</span>
