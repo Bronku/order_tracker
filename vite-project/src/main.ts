@@ -9,7 +9,6 @@ Alpine.data('main',()=>({
     page: 'view',
     routes: [
         { name: 'Zamówienia ciast', path: 'view', icon: 'cake'},
-        { name: 'Edycja zamówień', path: 'edit' , icon: 'edit'},
         { name: 'Podsumowanie', path: 'summary', icon: 'list-check'}
     ],
     overlay: false,
@@ -88,11 +87,15 @@ Alpine.data('main',()=>({
     },
     open_overlay(order: Order){
         this.overlay = true;
-        this.current_order = order;
+        this.current_order = JSON.parse(JSON.stringify(order));
     },
     edit_order(_order: Order){
         this.page = 'edit';
         this.overlay = false;
+    },
+    get_price(){
+        this.update_price(this.current_order);
+        return this.current_order.price;
     },
     
 

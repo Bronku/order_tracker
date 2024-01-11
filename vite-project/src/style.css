@@ -127,7 +127,7 @@ aside{
     transform: rotate(0deg);
 }
 .refresh-button.rotate{
-    transform: rotate(180deg);
+    transform: rotate(-360deg);
     transition: 0.3s;
 }
 
@@ -269,79 +269,76 @@ table > tbody > tr > td{
     column-gap: 1.5rem;
 }
 
-.overlay > main > *{
+.overlay > main > .main-info{
     display: flex;
     flex-direction: column;
-    padding: 0;
-    margin: 0;
-}
-
-main > .main-info {
     row-gap: 1.5rem;
 }
 
-.overlay > main > .main-info > *, .overlay > main > .order-contents{
+.overlay > main > .main-info > .text-info{
     background-color: var(--body-color);
     border: 1px solid var(--border-color);
     border-radius: 5px;
     box-shadow: 1px 1px 1px 0px rgba(0,0,0,0.05);
-}
-
-.overlay > main > * > .text-info:hover{
-    background-color: var(--hover-color);
-    transition: var(--transition-duration);
-    box-shadow: 0px 0px 1px 1px rgba(0,0,0,0.05) inset;
-}
-
-.order-contents > *{
-    border-bottom: 1px solid var(--border-color);
-}
-.order-contents > *:last-child{
-    border-bottom: none;
-    border-radius: 0 0 5px 5px;
-}
-.order-contents > *:first-child{
-    border-bottom: none;
-    border-radius: 5px 5px 0 0;
-}
-.order-contents > *:nth-child(2){
-    border-radius: 5px 5px 0 0;
-}
-.overlay > main > * > *{
-    padding: 0 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
+    &:hover, &:focus-within{
+        transition: var(--transition-duration);
+        box-shadow: 0px 0px 1px 1px rgba(0,0,0,0.05) inset;
+    }
 }
 
 .overlay > main > .order-contents{
-    display: grid;
-    grid-template-columns: 1fr repeat(5, 0fr);
-} 
-
-.overlay > main > .order-contents > .cake-info{
-    grid-column :1/7;
-    display: grid;
-    grid-template-columns: subgrid;
-    padding:0;
-    padding: 0.5rem 0;
-}
-
-
-.overlay > main > .order-contents > .cake-info>*{
     display: flex;
-    flex-direction:row;
-    justify-content: center;
+    flex-direction: column;
+    row-gap: 1.5rem;
+}
+
+.overlay > main > .order-contents > .available-cakes{
+    max-height: 20rem;
+    overflow: auto;
+}
+
+.overlay > main > .order-contents > .selected-cakes,
+.overlay > main > .order-contents > .available-cakes{
+    display: flex;
+    flex-direction: column;
+    background-color: var(--body-color);
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+}
+
+.overlay > main > .order-contents > .selected-cakes > .order-entry,
+.overlay > main > .order-contents > .available-cakes > .order-entry{
+    display: flex;
+    justify-content: flex-end;
     align-items: center;
+    padding: 0 1rem;
+    width: 100%;
+    min-height: 60px;
+    max-height: 60px;
+    border-bottom: 1px solid var(--border-color);
+    &:hover, &:focus-within {
+        transition: var(--transition-duration);
+        box-shadow: 0px 0px 1px 1px rgba(0,0,0,0.05) inset;
+    }
+    &:focus-within{
+        background-color: var(--hover-color);
+    }
+    &:last-child{
+        border-bottom: none;
+        border-radius: 0 0 5px 5px;
+    }
+    &:first-child{
+        border-bottom: none;
+        border-radius: 5px 5px 0 0;
+    }
+    &:nth-child(2){
+        border-radius: 5px 5px 0 0;
+    }
 }
 
-
-.overlay > main > .order-contents > .cake-info>.pseudo-header{
-    justify-content: flex-start;
-    padding-left: 1rem;
+.name{
+    margin-right: auto;
 }
-
 
 .overlay > footer{
     height: 5rem;
