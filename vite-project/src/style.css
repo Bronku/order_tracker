@@ -67,7 +67,7 @@ nav{
     align-items: center;
     overflow: auto;
 }
-.nav-button{
+nav>.nav-button{
     width: 45px;
     height: 45px;
     border: 2px solid transparent;
@@ -79,14 +79,26 @@ nav{
     align-items: center;
     transition: var(--transition-duration);
 }
+.nav-button{
+    width: 45px;
+    height: 45px;
+    border: 2px solid transparent;
+    border-radius: 100%;
+    flex-shrink: 0;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: var(--transition-duration);
+}
 .nav-button:hover{
     background-color: var(--hover-color);
 }
-.selected-nav-button{
+nav>.selected-nav-button{
     background-color: var(--base-color);
     border: 2px solid var(--base-font-color);
 }
-.selected-nav-button:hover{
+nav>.selected-nav-button:hover{
     background-color: var(--base-color);
 }
 aside{
@@ -101,6 +113,22 @@ aside{
     align-items: center;
     justify-content: space-between;
     overflow: auto;
+}
+.horizontal-buttons{
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+    column-gap: 1rem;
+    justify-content: flex-end;
+    align-items: center;
+
+}
+.refresh-button{
+    transform: rotate(0deg);
+}
+.refresh-button.rotate{
+    transform: rotate(180deg);
+    transition: 0.3s;
 }
 
 

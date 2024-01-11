@@ -1,11 +1,9 @@
 import Alpine from 'alpinejs';
-import PocketBase from 'pocketbase';
 import './style.css';
 import {Order, Cake, get_price, new_order} from './types.ts';
-import { get_orders, upload_order, remove_order, get_cakes} from './database.ts';
-import { pbAdress } from './constants.ts';
+import { pb, get_orders, upload_order, remove_order, get_cakes} from './database.ts';
 
-let pb: PocketBase;
+
 
 Alpine.data('main',()=>({   
     page: 'view',
@@ -15,6 +13,13 @@ Alpine.data('main',()=>({
         { name: 'Podsumowanie', path: 'summary', icon: 'list-check'}
     ],
     overlay: false,
+    redirect(path: string){
+        this.page = path;
+        this.current_order = new_order();
+    },
+
+
+
     
     orders: [] as Order[],
     cakes: [] as Cake[],
@@ -73,7 +78,6 @@ Alpine.data('main',()=>({
     //overlay actions
     hide_overlay(){
         this.overlay = false;
-        this.current_order = new_order();
     },
     open_overlay(order: Order){
         this.overlay = true;
@@ -103,12 +107,7 @@ Alpine.data('main',()=>({
 
 
 
-    async init(){
-        //await pb.collection('users').authWithPassword('user1@admin.com', 'secretsecret')
-        //await pb.collection('users').authWithPassword('Bronkuu','password');
-
-        pb = new PocketBase(pbAdress);
-        
+    async init(){        
         pb.afterSend = ( (response, data) => {
             if (response.status === 401)
                 this.page = 'login';

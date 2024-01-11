@@ -12,7 +12,7 @@
     <aside>
         <nav>
             <template x-for = "item in routes" >
-                <a class = "nav-button" x-bind:class="item.path == page && 'selected-nav-button'" x-bind:title="item.name" x-on:click.prevent = "page = item.path">
+                <a class = "nav-button" x-bind:class="item.path == page && 'selected-nav-button'" x-bind:title="item.name" x-on:click.prevent = "redirect(item.path)">
                     <box-icon x-bind:name="item.icon"></box-icon>
                 </a>
             </template>
@@ -25,6 +25,24 @@
         <template x-if = "page != 'login'">
             <header>
                 <h1 x-text = "routes.find(e=>e.path == page).name"></h1>
+                <div class = "horizontal-buttons">
+                    <a class = "nav-button" title = "wyszukiwanie">
+                    <box-icon name='search'></box-icon>
+                    </a>
+                    <a class = "nav-button" title = "wybierz datę">
+                        <box-icon name='calendar'></box-icon>
+                    </a>
+                    <a class = "nav-button" title = "odśwież zamówienia" 
+                    x-data = "{rotate : false}"
+                    x-on:click.prevent = "  update_orders;
+                                            rotate = true;
+                                            setTimeout(()=>rotate = false, 300);">
+                        <box-icon name='refresh' class = "refresh-button" x-bind:class = "rotate && 'rotate'" ></box-icon>
+                    </a>
+                    <a class = "nav-button" title = "nowe zamówienie" x-on:click.prevent = "redirect('edit')">
+                        <box-icon name='plus'></box-icon>
+                    </a>
+                </div>
             </header>
         </template>
         <main x-show = "page === 'view'">

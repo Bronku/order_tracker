@@ -1,7 +1,8 @@
 import { Order, Cake } from "./types";
 import PocketBase from 'pocketbase';
+import { pbAdress } from './constants.ts';
 
-
+export const pb = new PocketBase(pbAdress);
 
 //getters
 export async function get_orders(client: PocketBase){
