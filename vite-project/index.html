@@ -261,15 +261,18 @@
                 <template x-for="item in current_order.cakes">
                     <div class = "cake-info">
                         <h3 x-text = "item.name"></h3>
-                        <div x-show = "editing == true">-1</div>
-                        <div x-show = "editing == true">-0.5</div>
-                        <div>
+                        <div x-show = "editing == false"></div>
+                        <div x-show = "editing == false"></div>
+                        <div x-show = "editing == false"></div>
+                        <div x-show = "editing == false"></div>
+                        <div x-show = "editing == true" x-on:click = "item.quantity= (+item.quantity) - (+1)">-1</div>
+                        <div x-show = "editing == true"  x-on:click = "item.quantity= (+item.quantity) - (+0.5)">-0.5</div>
+                        <div class = "text">
                             <span x-text = "item.quantity"></span>
-                            <span>szt.</span>
                         </div>
-                        <div x-show = "editing == true">+0.5</div>
-                        <div x-show = "editing == true">+1</div>
-                    </div>
+                        <div x-show = "editing == true" x-on:click = "item.quantity= (+item.quantity) + (+0.5)">+0.5</div>
+                        <div x-show = "editing == true"  x-on:click = "item.quantity= (+item.quantity) + (+1)">+1</div>
+                        </div>
                 </template>
             </div>
         </main>

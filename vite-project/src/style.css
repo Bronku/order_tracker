@@ -287,7 +287,7 @@ main > .main-info {
     box-shadow: 1px 1px 1px 0px rgba(0,0,0,0.05);
 }
 
-.overlay > main > * > *:hover{
+.overlay > main > * > .text-info:hover{
     background-color: var(--hover-color);
     transition: var(--transition-duration);
     box-shadow: 0px 0px 1px 1px rgba(0,0,0,0.05) inset;
@@ -315,7 +315,43 @@ main > .main-info {
     flex-wrap: wrap;
 }
 
+.overlay > main > .order-contents{
+    display: grid;
+    grid-template-columns: 1fr repeat(5, 0fr);
+} 
 
+.overlay > main > .order-contents > .cake-info{
+    grid-column :1/7;
+    display: grid;
+    grid-template-columns: subgrid;
+    padding:0;
+    padding: 0.5rem 0;
+}
+
+
+.overlay > main > .order-contents > .cake-info>*{
+    display: flex;
+    flex-direction:row;
+    justify-content: center;
+    align-items: center;
+}
+
+.overlay >main >.order-contents > .cake-info >div{
+    width:40px;
+    height:40px;
+    border-radius: 100%;
+    font-weight: 100;
+    cursor: pointer;
+}
+.overlay >main >.order-contents > .cake-info >div:hover{
+    background-color: var(--hover-color);
+    transition: var(--transition-duration);
+}
+
+
+.overlay > main > .order-contents > .cake-info>h3{
+    justify-content: flex-start;
+}
 
 
 .overlay > footer{
@@ -330,11 +366,10 @@ main > .main-info {
 
 
 textarea {
-    width: 100%;
+    max-width: 100%;
+    min-width: 100%;
+    resize: none;
 }
-
-
-
 
 
 
