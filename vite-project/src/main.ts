@@ -17,6 +17,7 @@ Alpine.data('main',()=>({
         this.page = path;
         this.current_order = new_order();
     },
+    editing :false,
 
 
 
