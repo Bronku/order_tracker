@@ -39,7 +39,7 @@
                                             setTimeout(()=>rotate = false, 300);">
                         <box-icon name='refresh' class = "refresh-button" x-bind:class = "rotate && 'rotate'" ></box-icon>
                     </a>
-                    <a class = "nav-button" title = "nowe zamówienie" x-on:click.prevent = "redirect('edit')">
+                    <a class = "nav-button" title = "nowe zamówienie" x-on:click.prevent = "create_order">
                         <box-icon name='plus'></box-icon>
                     </a>
                 </div>
@@ -192,7 +192,7 @@
     </div>
     <div x-show = "overlay" class = "overlay-background" x-on:click.prevent="hide_overlay()" x-cloak x-transition.opacity></div>
     <div class = "overlay"
-        x-show = "overlay && page === 'view' && current_order.id !== null"
+        x-show = "overlay && page === 'view'"
         x-transition:enter = "ease-out"
         x-transition:enter-start = "move-right"
         x-transition:leave = "ease-in"
@@ -260,23 +260,39 @@
             <div class = "order-contents" x-show = "current_order.cakes != null">
                 <template x-for="item in current_order.cakes">
                     <div class = "cake-info">
-                        <h3 x-text = "item.name"></h3>
+                        <div class = "pseudo-header">
+                            <h3 x-text = "item.name"></h3>
+                        </div>
                         <div x-show = "editing == false"></div>
                         <div x-show = "editing == false"></div>
-                        <div x-show = "editing == false"></div>
-                        <div x-show = "editing == false"></div>
-                        <div x-show = "editing == true" x-on:click = "item.quantity= (+item.quantity) - (+1)">-1</div>
-                        <div x-show = "editing == true"  x-on:click = "item.quantity= (+item.quantity) - (+0.5)">-0.5</div>
+                        <a x-show = "editing == true" class = "nav-button" x-on:click = "item.quantity= (+item.quantity) - (+1)">
+                            <boxicon name='minus'></boxicon>
+                        </a>
                         <div class = "text">
                             <span x-text = "item.quantity"></span>
                         </div>
-                        <div x-show = "editing == true" x-on:click = "item.quantity= (+item.quantity) + (+0.5)">+0.5</div>
-                        <div x-show = "editing == true"  x-on:click = "item.quantity= (+item.quantity) + (+1)">+1</div>
+                        <a x-show = "editing == true"  class = "nav-button" x-on:click = "item.quantity= (+item.quantity) + (+1)">
+                            <boxicon name='plus'></boxicon>
+                        </a>
                         </div>
                 </template>
+                <div class = "new_cakes" x-show = "editing == true">
+                    <template x-for="item in cakes">
+                        <div class = "cake-info">
+                            <div class = "pseudo-header">
+                                <h3 x-text = "item.name"></h3>
+                            </div>
+                            <a x-show = "editing == true"  class = "nav-button" x-on:click = "item.quantity= (+item.quantity) + (+1)">
+                                <boxicon name='plus'></boxicon>
+                            </a>
+                            </div>
+                    </template>
+
+                </div>
             </div>
         </main>
         <footer>
+            <a class = "nav-button" x-on:click.prevent = "save_order()" x-show = "editing == true"><box-icon name='save'></box-icon></a>
             <a class = "nav-button"  x-on:click.prevent = "editing = !editing"><box-icon name='edit'></box-icon></a>
             <a class = "nav-button" x-on:click.prevent = "delete_order(current_order)"><box-icon name='trash' ></box-icon></a>
         </footer>

@@ -64,7 +64,7 @@ Alpine.data('main',()=>({
     },
     async save_order(){
         await upload_order(pb,JSON.parse(JSON.stringify(this.current_order)));
-        this.current_order = new_order();
+        this.editing = false;
         await this.update_orders();
     },
     async delete_order(order: Order){
@@ -73,12 +73,18 @@ Alpine.data('main',()=>({
         await this.update_orders();
         this.overlay = false;
     },
+    create_order(){
+        this.current_order = new_order();
+        this.overlay = true;
+        this.editing = true;
+    },
 
 
 
     //overlay actions
     hide_overlay(){
         this.overlay = false;
+        this.editing = false;
     },
     open_overlay(order: Order){
         this.overlay = true;
