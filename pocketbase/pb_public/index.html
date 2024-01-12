@@ -4,259 +4,350 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="#">
-    <title>Document</title>
+    <title>Document</title>
+
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
-  <script type="module" crossorigin src="/assets/index-xaCQv5wK.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-OHekOMLv.css">
+  <script type="module" crossorigin src="/assets/index-JDWyOVgY.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-vkOF0_3g.css">
 </head>
 <body x-data = "main">
+    <aside>
         <nav>
-            <template x-for = "item in routes">
-                <a class = "nav-button" x-bind:class="item.path == page && 'selected-nav-button'" x-bind:title="item.name" x-on:click.prevent = "page = item.path">
+            <template x-for = "item in routes" >
+                <a class = "nav-button" x-bind:class="item.path == page && 'selected-nav-button'" x-bind:title="item.name" x-on:click.prevent = "redirect(item.path)">
                     <box-icon x-bind:name="item.icon"></box-icon>
                 </a>
             </template>
         </nav>
+        <a class = "nav-button" x-on:click.prevent = "logout()">
+            <box-icon name='log-out'></box-icon>
+        </a>
+    </aside>
     <div class="app-body">
-        <header>
-            <h1 x-text = "routes.find(e=>e.path == page).name"></h1>
-        </header>
-        <template x-if = "page === 'view'">
-            <main>
-                <table>
-                    <thead>
-                        <tr>
-                            <th><span>Imię</span></th>
-                            <th><span>Nazwisko</span></th>
-                            <th><span>Dostawa</span></th>
-                            <th><span>Numer kontaktowy</span></th>
-                            <th><span>Do zapłaty</span></th>
-                            <th x-data = "{show: false, date:''}" x-on:click.outside="show=false">
-                                <div x-on:click="show = !show">
-                                    <span x-show="!show  && date == ''">Data odbioru</span>
-                                    <span x-show="!show  && date != ''" x-text="date"></span>
-                                </div>
-                                <input x-show = "show" type = "date" x-model = "date" x-on:change="filter_orders(date)">
-                            </th>
-                            <th><span>Status</span></th>
-                            <th><span>Dodatkowe informacje</span></th>
+        <template x-if = "page != 'login'">
+            <header>
+                <h1 x-text = "routes.find(e=>e.path == page).name"></h1>
+                <div class = "horizontal-buttons">
+                    <!--
+                    <a class = "nav-button" title = "wyszukiwanie">
+                    <box-icon name='search'></box-icon>
+                    </a>-->
+                    <a class = "nav-button" title = "wybierz datę" x-on:click = "date_picker = !date_picker">
+                        <box-icon name='calendar'></box-icon>
+                    </a>
+                    <input class = "date-picker" type = "date" x-show = "date_picker" x-model = "date" x-on:change="update_orders">
+                    <a class = "nav-button" title = "odśwież zamówienia" 
+                    x-data = "{rotate : false}"
+                    x-on:click.prevent = "  update_orders;
+                                            rotate = true;
+                                            setTimeout(()=>rotate = false, 300);">
+                        <box-icon name='refresh' class = "refresh-button" x-bind:class = "rotate && 'rotate'" ></box-icon>
+                    </a>
+                    <a class = "nav-button" title = "nowe zamówienie" x-on:click.prevent = "create_order">
+                        <box-icon name='plus'></box-icon>
+                    </a>
+                </div>
+            </header>
+        </template>
+        <main x-show = "page === 'view'">
+            <table>
+                <thead>
+                    <tr>
+                        <th><span>Imię</span></th>
+                        <th><span>Nazwisko</span></th>
+                        <th><span>Dostawa</span></th>
+                        <th><span>Numer kontaktowy</span></th>
+                        <th><span>Do zapłaty</span></th>
+                        <th><span>Data</span></th>
+                        <th><span>Status</span></th>
+                        <th><span>Dodatkowe informacje</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template x-for = "order in orders" :key = "order.id">
+                        <tr x-on:click.prevent = "open_overlay(order)" :title = "order.id">
+                            <td x-text = "order.name"></td>
+                            <td x-text = "order.surname"></td>
+                            <td x-text = "order.delivery === 'dostawa' ? order.address : order.delivery"></td>
+                            <td x-text = "order.phone"></td>
+                            <td x-text = "order.price"></td>
+                            <td x-text = "order.date"></td>
+                            <td x-text = "order.status"></td>
+                            <td x-text = "order.additional_info"></td>                             
                         </tr>
-                    </thead>
-                    <tbody>
-                        <template x-for = "order in orders" :key = "order.id">
-                            <tr x-on:click.prevent = "open_overlay(order)" :title = "order.id">
-                                <td x-text = "order.name"></td>
-                                <td x-text = "order.surname"></td>
-                                <td x-text = "order.delivery === 'dostawa' ? order.address : order.delivery"></td>
-                                <td x-text = "order.phone"></td>
-                                <td x-text = "order.price"></td>
-                                <td x-text = "order.date"></td>
-                                <td x-text = "order.status"></td>
-                                <td x-text = "order.additional_info"></td>                             
-                            </tr>
-                        </template>
-                    </tbody>
-                </table>
-            </main>
-        </template>
-        <template x-if = "page === 'summary'">
-            <main>
-                <table>
-                                    <thead>
-                                        <tr>
-                                            <th><span>Ciasto</span></th>
-                                            <th><span>Zamówiona Ilość</span></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <template x-for = "cake in cakes" :key = "cake.cake.id">
-                                            <tr :title = "cake.cake.id">
-                                                <td x-text = "cake.cake.name"></td>
-                                                <td x-text = "cake.sum"></td>
-                                            </tr>
-                                        </template>
-                                    </tbody>
-                </table>
-            </main>
-        </template>
-        <template x-if = "page === 'edit'">
-            <main>
-                <form x-effect = "update_price(current_order)">
-                    <div>
-                    <div>
-                        <label for="name">Name</label>
-                        <input type="text" name="name" id="name" x-model = "current_order.name">
-                    </div>
-                
-                    <div>
-                        <label for="surname">Surname</label>
-                        <input type="text" name="surname" id="surname" x-model = "current_order.surname">
-                    </div>
-                    <div>
-                        <label for="delivery">Delivery</label>
-                        <select name="delivery" id="delivery" x-model = "current_order.delivery">
-                            <option value="kartuzy">Kartuzy</option>
-                            <option value="somonino">Somonino</option>
-                            <option value="dostawa">Dostawa</option>
-                        </select>
-                    </div>
-                
-                    <div x-show = "current_order.delivery === 'dostawa'">
-                        <label for="address">Address</label>
-                        <input type="text" name="address" id="address" x-model = "current_order.address">
-                    </div>
-                
-                    <div>
-                        <label for="phone">Phone</label>
-                        <input type="text" name="phone" id="phone" x-model = "current_order.phone">
-                    </div>
-                
-                    <div>
-                        <label for = "advance" >Advance</label>
-                        <input type = "text" name = "advance" id = "advance" x-model = "current_order.advance">
-                    </div>
-                
-                    <div>
-                        <label for = "status" >Status</label>
-                        <select name = "status" id = "status" x-model = "current_order.status">
-                            <option value = "zamówione" >Zamówione</option>
-                            <option value = "w trakcie" >W trakcie</option>
-                            <option value = "gotowe" >Gotowe</option>
-                            <option value = "odebrane" >Odebrane</option>
-                        </select>
-                    </div>
-                
-                    <div>
-                        <label for = "date" >Date</label>
-                        <input type = "date" name = "date" id = "date" x-model = "current_order.date">
-                    </div>
-                
-                    <div>
-                        <label for = "additional_info" >Additional info</label>
-                        <input type = "text" name = "additional_info" id = "additional_info" x-model = "current_order.additional_info">
-                    </div>
-                
-                    
-                    
-                    
-                    <div>
-                        <span>Total price: </span>
-                        <span x-text = "current_order.price"></span>
-                        <span>zł</span>
-                        <button x-on:click.prevent = "save_order()">save</button>
-                        <button x-on:click.prevent = "clear_form()">clear</button>
-                    </div>
-                    </div>
-                    <div>
-                        <template x-for ="item in current_order.contents" :key="item.cake.id">
-                            <li>
-                                <label :for = "$id('quantity', item.cake.id)">
-                                    <span x-text = "item.cake.name"></span>
-                                    <span> - </span>
-                                    <span x-text = "item.cake.price"></span>
-                                    <span>zł, total: </span>
-                                    <span x-text = "item.cake.price * item.quantity"></span>
-                                    <span>zł</span>
-                                </label>
-                                <input type = "text" name = "quantity" :id = "$id('quantity', item.cake.id)" x-model = "item.quantity">
-                                <button x-on:click.prevent = "remove_cake(item.cake)">remove</button>
-                            </li>
-                        </template>
-                    </div>
-                    <div x-data = "{show : false}">
-                        
-                        <button x-on:click.prevent = "show = !show">expand available cakes</button>
-                        <div x-show="show">
-                            <template x-for = "cake in cakes" :key = "cake.cake.id">
-                                <li>
-                                    <button x-on:click.prevent = "add_cake(cake.cake)">add</button>
-                                    <span x-text="cake.cake.name"></span>
-                                    <span> - </span>
-                                    <span x-text="cake.cake.price"></span>
-                                    <span>zł</span>
-                                </li>
-                            </template>
+                    </template>
+                </tbody>
+            </table>
+        </main>
+        <main x-show = "page === 'summary'">
+            <table>
+                <thead>
+                    <tr>
+                        <th><span>Ciasto</span></th>
+                        <th><span>Zamówiona Ilość</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template x-for = "cake in summary" :key = "cake.id">
+                        <tr :title = "cake.id">
+                            <td x-text = "cake.name"></td>
+                            <td x-text = "cake.quantity"></td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </main>
+        <main x-show = "page === 'special_orders'">
+            <table>
+                <thead>
+                    <tr>
+                        <th><span>Imię</span></th>
+                        <th><span>Nazwisko</span></th>
+                        <th><span>Dostawa</span></th>
+                        <th><span>Numer kontaktowy</span></th>
+                        <th><span>Do zapłaty</span></th>
+                        <th><span>Data</span></th>
+                        <th><span>Status</span></th>
+                        <th><span>Dodatkowe informacje</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template x-for = "order in special_orders" :key = "order.id">
+                        <tr x-on:click.prevent = "open_special_overlay(order)" :title = "order.id">
+                            <td x-text = "order.name"></td>
+                            <td x-text = "order.surname"></td>
+                            <td x-text = "order.delivery === 'dostawa' ? order.address : order.delivery"></td>
+                            <td x-text = "order.phone"></td>
+                            <td x-text = "order.price"></td>
+                            <td x-text = "order.date"></td>
+                            <td x-text = "order.status"></td>
+                            <td x-text = "order.additional_info"></td>                        
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </main>
+    </div>
+    <div x-show = "overlay" class = "overlay-background" x-on:click.prevent="hide_overlay()" x-cloak x-transition.opacity></div>
+    <div class = "overlay"
+        x-show = "overlay && (page === 'view' || page === 'special_orders')"
+        x-transition:enter = "ease-out"
+        x-transition:enter-start = "move-right"
+        x-transition:leave = "ease-in"
+        x-transition:leave-end="move-right">
+        <header>
+            <a class = "nav-button" x-on:click.prevent = "hide_overlay()"><box-icon name='x'></box-icon></a>
+            <h2 x-show = "page === 'view'"><span x-text = "current_order.id||'nowe zamówienie'"></span></h2>
+            <h2 x-show = "page === 'special_orders'"><span x-text = "current_special_order.id||'nowe zamówienie'"></span></h2>
+        </header>
+        <main x-show = "page === 'view'">
+            <div class = "main-info">
+                <div class = "text-info">
+                    <h3>Imię</h3>
+                    <span x-show = "editing == false" x-text = "current_order.name"></span>
+                    <input x-show = "editing == true" type = "text" x-model = "current_order.name">
+                </div>
+                <div class = "text-info">
+                    <h3>Nazwisko</h3>
+                    <span x-show = "editing == false" x-text = "current_order.surname"></span>
+                    <input x-show = "editing == true" type = "text" x-model = "current_order.surname">
+                </div>
+                <div class = "text-info">
+                    <h3>Dostawa</h3>
+                    <span x-show = "editing == false" x-text = "current_order.delivery === 'dostawa' ? current_order.address : current_order.delivery"></span>
+                    <select x-show = "editing == true" name="delivery" x-model = "current_order.delivery">
+                        <option value="kartuzy">Kartuzy</option>
+                        <option value="somonino">Somonino</option>
+                        <option value="dostawa">Dostawa</option>
+                    </select>
+                </div>
+                <div class = "text-info" x-show = "editing == true&&current_order.delivery ==='dostawa'">
+                    <h3>Miejsce dostawy</h3>
+                    <input type = "text" x-model = "current_order.address">
+                </div>
+                <div class = "text-info">
+                    <h3>Numer kontaktowy</h3>
+                    <span x-show = "editing == false" x-text = "current_order.phone"></span>
+                    <input x-show = "editing == true" type = "text" x-model = "current_order.phone">
+                </div>
+                <div class = "text-info">
+                    <h3>Do zapłaty</h3>
+                    <span x-text = "get_price"></span>
+                </div>
+                <div class = "text-info">
+                    <h3>Data odbioru</h3>
+                    <span x-show = "editing == false" x-text= "current_order.date"></span>
+                    <input type = "date" x-show = "editing == true" x-model = "current_order.date">
+                </div>
+                <div class = "text-info">
+                    <h3>Status</h3>
+                    <span x-show = "editing == false" x-text = "current_order.status"></span>
+                    <select x-show = "editing == true" x-model="current_order.status">
+                        <option value = "zamówione" >Zamówione</option>
+                        <option value = "w trakcie" >W trakcie</option>
+                        <option value = "gotowe" >Gotowe</option>
+                        <option value = "odebrane" >Odebrane</option>
+                    </select>
+                </div>
+                <div class = "text-info">
+                    <h3>Dodatkowe informacje</h3>
+                    <span x-show = "editing == false" x-text = "current_order.additional_info"></span>
+                    <textarea x-show = "editing == true" x-model = "current_order.additional_info"></textarea>
+                </div>
+            </div>
+            <div class = "order-contents" x-show = "current_order.cakes != null">
+                <div class="available-cakes" x-show = "editing == true">
+                    <template x-for = "item in cakes">
+                        <div class = "order-entry" >
+                            <span x-text = "item.name" class = "name"></span>
+                            <a class = "nav-button" x-on:click.prevent = "add_cake(item)">
+                                <box-icon name='plus'></box-icon>
+                            </a>
                         </div>
-                    </div>
-                
-                </form>
-            </main>
-        </template>
-        <template x-if = "overlay">
-            <div style = "position:absolute">
-                <div class = "overlay-background" x-on:click.prevent="hide_overlay()"></div>
-                <div class = "overlay">
-                    <template x-if = "page === 'view' && current_order.id !== null" x-transition>
-                        <div class = "overlay-content">
-                            <header>
-                                <a class = "nav-button">
-                                    <box-icon name='x' x-on:click.prevent = "hide_overlay()"></box-icon>
-                                </a>
-                                <h2>
-                                    <span x-text = "current_order.id"></span>
-                                </h2>
-                            </header>
-                            <div class="main-info-wrapper">
-                                <div class = "main-info">
-                                    <div class = "text-info">
-                                        <h3>Imię</h3>
-                                        <span x-text = "current_order.name"></span>
-                                    </div>
-                                    <div class = "text-info">
-                                        <h3>Nazwisko</h3>
-                                        <span x-text = "current_order.surname"></span>
-                                    </div>
-                                    <div class = "text-info">
-                                        <h3>Dostawa</h3>
-                                        <span x-text = "current_order.delivery === 'dostawa' ? current_order.address : current_order.delivery"></span>
-                                    </div>
-                                    <div class = "text-info">
-                                        <h3>Numer kontaktowy</h3>
-                                        <span x-text = "current_order.phone"></span>
-                                    </div>
-                                    <div class = "text-info">
-                                        <h3>Do zapłaty</h3>
-                                        <span x-text = "current_order.price"></span>
-                                    </div>
-                                    <div class = "text-info">
-                                        <h3>Data odbioru</h3>
-                                        <span x-text = "current_order.date"></span>
-                                    </div>
-                                    <div class = "text-info">
-                                        <h3>Status</h3>
-                                        <span x-text = "current_order.status"></span>
-                                    </div>
-                                    <div class = "text-info">
-                                        <h3>Dodatkowe informacje</h3>
-                                        <span x-text = "current_order.additional_info" contenteditable="true"></span>
-                                    </div>
-                                </div>
-                                <div class = "main-info">
-                                    <div class = "order-contents">
-                                        <template x-for="item in current_order.contents">
-                                            <div class = "cake-info">
-                                                <h3 x-text = "item.cake.name"></h3>
-                                                <span>
-                                                    <span x-text = "item.quantity"></span>
-                                                    <span>szt.</span>
-                                                </span>
-                                            </div>
-                                        </template>
-                                    </div>
-                                </div>
-                            </div>
-                            <footer>
-                                <a class = "nav-button">
-                                    <box-icon name='edit' x-on:click.prevent = "edit_order(current_order)"></box-icon>
-                                </a>
-                                <a class = "nav-button">
-                                    <box-icon name='trash' x-on:click.prevent = "delete_order(current_order)"></box-icon>
-                                </a>
-                            </footer>
+                    </template>
+                </div>
+                <div class="selected-cakes" x-show = "current_order.cakes != null && current_order.cakes.length != 0">
+                    <template x-for = "item in current_order.cakes">
+                        <div class = "order-entry">
+                            <span x-text = "item.name" class = "name"></span>
+                            <span x-show = "editing == false" x-text = "item.quantity"></span>
+                            <input x-show = "editing == true" type = "text" x-model = "item.quantity">
+                            <a class = "nav-button" x-show = "editing == true" x-on:click.prevent="remove_cake(item)">
+                                <box-icon name='minus'></box-icon>
+                            </a>
                         </div>
                     </template>
                 </div>
             </div>
-        </template>
+        </main>
+        <main x-show = "page === 'special_orders'">
+            <div class = "main-info">
+                <div class = "text-info">
+                    <h3>Imię</h3>
+                    <span x-show = "editing == false" x-text = "current_special_order.name"></span>
+                    <input x-show = "editing == true" type = "text" x-model = "current_special_order.name">
+                </div>
+                <div class = "text-info">
+                    <h3>Nazwisko</h3>
+                    <span x-show = "editing == false" x-text = "current_special_order.surname"></span>
+                    <input x-show = "editing == true" type = "text" x-model = "current_special_order.surname">
+                </div>
+                <div class = "text-info">
+                    <h3>Dostawa</h3>
+                    <span x-show = "editing == false" x-text = "current_special_order.delivery === 'dostawa' ? current_special_order.address : current_special_order.delivery"></span>
+                    <select x-show = "editing == true" name="delivery" x-model = "current_special_order.delivery">
+                        <option value="kartuzy">Kartuzy</option>
+                        <option value="somonino">Somonino</option>
+                        <option value="dostawa">Dostawa</option>
+                    </select>
+                </div>
+                <div class = "text-info" x-show = "editing == true&&current_special_order.delivery ==='dostawa'">
+                    <h3>Miejsce dostawy</h3>
+                    <input type = "text" x-model = "current_special_order.address">
+                </div>
+                <div class = "text-info">
+                    <h3>Numer kontaktowy</h3>
+                    <span x-show = "editing == false" x-text = "current_special_order.phone"></span>
+                    <input x-show = "editing == true" type = "text" x-model = "current_special_order.phone">
+                </div>
+                <div class = "text-info">
+                    <h3>Do zapłaty</h3>
+                    <span x-show = "editing == false" x-text = "current_special_order.price"></span>
+                    <input x-show = "editing == true" type = "text" x-model = "current_special_order.price">
+                </div>
+                <div class = "text-info">
+                    <h3>Data odbioru</h3>
+                    <span x-show = "editing == false" x-text= "current_special_order.date"></span>
+                    <input type = "date" x-show = "editing == true" x-model = "current_special_order.date">
+                </div>
+                <div class = "text-info">
+                    <h3>Status</h3>
+                    <span x-show = "editing == false" x-text = "current_special_order.status"></span>
+                    <select x-show = "editing == true" x-model="current_special_order.status">
+                        <option value = "zamówione" >Zamówione</option>
+                        <option value = "w trakcie" >W trakcie</option>
+                        <option value = "gotowe" >Gotowe</option>
+                        <option value = "odebrane" >Odebrane</option>
+                    </select>
+                </div>
+                <div class = "text-info">
+                    <h3>Dodatkowe informacje</h3>
+                    <span x-show = "editing == false" x-text = "current_special_order.additional_info"></span>
+                    <textarea x-show = "editing == true" x-model = "current_special_order.additional_info"></textarea>
+                </div>
+            </div>
+            <div class = "main-info">
+                <div class = "text-info">
+                    <h3>Smak</h3>
+                    <span x-show = "editing == false" x-text = "current_special_order.flavour"></span>
+                    <input x-show = "editing == true" type = "text" x-model = "current_special_order.flavour">
+                </div>
+                <div class = "text-info">
+                    <h3>Ilość porcji</h3>
+                    <span x-show = "editing == false" x-text = "current_special_order.portion_count"></span>
+                    <input x-show = "editing == true" type = "text" x-model = "current_special_order.portion_count">
+                </div>
+                <div class = "text-info">
+                    <h3>Napis na torcie</h3>
+                    <span x-show = "editing == false" x-text = "current_special_order.cake_text"></span>
+                    <input x-show = "editing == true" type = "text" x-model = "current_special_order.cake_text">
+                </div>
+                <div class = "text-info">
+                    <h3>Polewa</h3>
+                    <span x-show = "editing == false" x-text = "current_special_order.coating"></span>
+                    <select x-show = "editing == true" x-model="current_special_order.coating">
+                        <option value="smietana">smietana</option>
+                        <option value="masa">masa</option>
+                        <option value="drip">drip</option>
+                    </select>
+                </div>
+                <div class = "text-info">
+                    <h3>Dla kogo?</h3>
+                    <span x-show = "editing == false" x-text = "current_special_order.for_whom"></span>
+                    <input x-show = "editing == true" type = "text" x-model = "current_special_order.for_whom">
+                </div>
+                <div class = "text-info">
+                    <h3>Opłatek ze zdjęciem (jaki)</h3>
+                    <span x-show = "editing == false" x-text = "current_special_order.image"></span>
+                    <input x-show = "editing == true" type = "text" x-model = "current_special_order.image">
+                </div>
+                <div class = "text-info">
+                    <h3>Dekoracje</h3>
+                    <span x-show = "editing == false" x-text = "current_special_order.decoration"></span>
+                    <input x-show = "editing == true" type = "text" x-model = "current_special_order.decoration">
+                </div>
+            </div>
+        </main>
+        <footer x-show = "page === 'view'">
+            <a class = "nav-button" x-on:click.prevent = "save_order()" x-show = "editing == true"><box-icon name='save'></box-icon></a>
+            <a class = "nav-button"  x-on:click.prevent = "editing = !editing"><box-icon name='edit'></box-icon></a>
+            <a class = "nav-button" x-on:click.prevent = "delete_order(current_order)"><box-icon name='trash' ></box-icon></a>
+        </footer>
+        <footer x-show = "page === 'special_orders'">
+            <a class = "nav-button" x-on:click.prevent = "save_special_order()" x-show = "editing == true"><box-icon name='save'></box-icon></a>
+            <a class = "nav-button"  x-on:click.prevent = "editing = !editing"><box-icon name='edit'></box-icon></a>
+            <a class = "nav-button" x-on:click.prevent = "delete_special_order(current_special_order)"><box-icon name='trash' ></box-icon></a>
+        </footer>
     </div>
+    <template x-if = "page === 'login'">
+        <main class = "login-screen">
+            <form>
+                <header>
+                    <h1>Logowanie</h1>
+                </header>
+                <div>
+                    <label for="login">Login</label>
+                    <input type="text" name="login" id="login" x-model = "user">
+                </div>
+                <div>
+                    <label for="password">Password</label>
+                    <input type="password" name="password" id="password" x-model = "password">
+                </div>
+                <div>
+                    <button x-on:click.prevent = "login()">login</button>
+                </div>
+            </form>
+        </main>
+    </template>
+</body>
 </html>
