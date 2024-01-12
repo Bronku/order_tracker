@@ -20,6 +20,53 @@ export type Order = {
     status: string, //'zamówione' | 'w trakcie' | 'gotowe' | 'dostarczone'
     cakes: Cake[]
 }
+
+export type SpecialOrder = {
+    id : string | null,
+    name : string,
+    surname : string,
+    delivery : string,
+    address : string,
+    phone : string,
+    advance : number,
+    date : string,
+    additional_info : string,
+    price : number,
+    status : string,
+    flavour : string,
+    portion_count : number,
+    cake_text : string,
+    coating : string,
+    for_whom : string,
+    decoration : string,
+    shape : string,
+    image : string,   
+}
+
+export function new_special_order(){
+    return {
+        id:null,
+        name : '',
+        surname : '',
+        delivery : 'kartuzy',
+        address : '',
+        phone : '',
+        advance : 0,
+        date : '',
+        additional_info : '',
+        price : 0,
+        status : 'zamówione',
+        flavour : '',
+        portion_count : 0,
+        cake_text : '',
+        coating : '',
+        for_whom : '',
+        decoration : '',
+        shape : '',
+        image : '',   
+    }
+}
+
 export function new_order(){
     return {
         id : null,

@@ -1,7 +1,7 @@
 import Alpine from 'alpinejs';
 import './style.css';
-import {Order, Cake, get_price, new_order} from './types.ts';
-import { pb, get_orders, upload_order, remove_order, get_cakes} from './database.ts';
+import {Order,SpecialOrder, new_special_order, Cake, get_price, new_order} from './types.ts';
+import { upload_special_order,remove_special_order,pb, get_orders, get_special_orders, upload_order, remove_order, get_cakes} from './database.ts';
 
 
 
@@ -10,7 +10,7 @@ Alpine.data('main',()=>({
     routes: [
         { name: 'Zamówienia ciast', path: 'view', icon: 'list-ul'},
         { name: 'Podsumowanie', path: 'summary', icon: 'list-check'},
-        { name: 'Zamówienia tortów', path:'cakes', icon:'cake'}
+        { name: 'Zamówienia tortów', path:'special_orders', icon:'cake'}
     ],
     overlay: false,
     redirect(path: string){
@@ -18,14 +18,18 @@ Alpine.data('main',()=>({
         this.current_order = new_order();
     },
     editing :false,
+    date_picker: false,
+    date: '',
 
 
 
     
     orders: [] as Order[],
+    special_orders: [] as SpecialOrder[],
     cakes: [] as Cake[],
     summary: [] as Cake[],
     current_order: {} as Order,
+    current_special_order: {} as SpecialOrder,
 
     
     //view actions
@@ -33,13 +37,19 @@ Alpine.data('main',()=>({
         this.cakes = await get_cakes(pb);
         this.summary = this.cakes;
 
-        this.orders = await get_orders(pb);
+        let filter = '';
+        if (this.date != '')
+            filter = pb.filter ("date = {:date}", {date: this.date});
+        
+        this.special_orders = await get_special_orders(pb, filter);
+        this.orders = await get_orders(pb, filter);
         for (const order of this.orders){
             if (order.cakes===null)
                 continue;
             for (const cake of order.cakes)
                 this.summary.find(e=>e.id == cake.id)!.quantity += +cake.quantity;
         }
+
     },
 
     
@@ -67,14 +77,26 @@ Alpine.data('main',()=>({
         this.editing = false;
         await this.update_orders();
     },
+    async save_special_order(){
+        await upload_special_order(pb,JSON.parse(JSON.stringify(this.current_special_order)));
+        this.editing = false;
+        await this.update_orders();
+    },
     async delete_order(order: Order){
         await remove_order(pb,order);
         this.current_order = new_order();
         await this.update_orders();
         this.overlay = false;
     },
+    async delete_special_order(order: SpecialOrder){
+        await remove_special_order(pb,order);
+        this.current_special_order = new_special_order();
+        await this.update_orders();
+        this.overlay = false;
+    },
     create_order(){
         this.current_order = new_order();
+        this.current_special_order = new_special_order();
         this.overlay = true;
         this.editing = true;
     },
@@ -89,6 +111,10 @@ Alpine.data('main',()=>({
     open_overlay(order: Order){
         this.overlay = true;
         this.current_order = JSON.parse(JSON.stringify(order));
+    },
+    open_special_overlay(order: SpecialOrder){
+        this.overlay = true;
+        this.current_special_order = JSON.parse(JSON.stringify(order));
     },
     edit_order(_order: Order){
         this.page = 'edit';
@@ -131,7 +157,7 @@ Alpine.data('main',()=>({
             this.page = 'login';
             return
         }
-    
+        this.current_special_order = new_special_order();
         this.current_order = new_order();
         this.update_orders();
     }
