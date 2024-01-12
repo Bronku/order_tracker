@@ -103,7 +103,7 @@
         x-transition:leave-end="move-right">
         <header>
             <a class = "nav-button" x-on:click.prevent = "hide_overlay()"><box-icon name='x'></box-icon></a>
-            <h2><span x-text = "current_order.id"></span></h2>
+            <h2><span x-text = "current_order.id||'nowe zamówienie'"></span></h2>
         </header>
         <main>
             <div class = "main-info">

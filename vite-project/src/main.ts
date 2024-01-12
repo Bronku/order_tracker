@@ -8,8 +8,9 @@ import { pb, get_orders, upload_order, remove_order, get_cakes} from './database
 Alpine.data('main',()=>({   
     page: 'view',
     routes: [
-        { name: 'Zamówienia ciast', path: 'view', icon: 'cake'},
-        { name: 'Podsumowanie', path: 'summary', icon: 'list-check'}
+        { name: 'Zamówienia ciast', path: 'view', icon: 'list-ul'},
+        { name: 'Podsumowanie', path: 'summary', icon: 'list-check'},
+        { name: 'Zamówienia tortów', path:'cakes', icon:'cake'}
     ],
     overlay: false,
     redirect(path: string){
