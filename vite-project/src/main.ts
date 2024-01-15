@@ -20,6 +20,7 @@ Alpine.data('main',()=>({
     editing :false,
     date_picker: false,
     date: '',
+    overlay_type: 'order',
 
 
 
@@ -51,9 +52,14 @@ Alpine.data('main',()=>({
         }
     },
     async get_order_by_id(id: string){
-        let filter = pb.filter ("id = {:id}", {id: id});
+        const filter = pb.filter ("id = {:id}", {id: id});
         const response = await get_orders(pb, filter);
-        console.log(response);
+        return JSON.parse(JSON.stringify(response[0]));
+    },
+    async get_special_order_by_id(id: string){
+        const filter = pb.filter ("id = {:id}", {id: id});
+        const response = await get_special_orders(pb, filter);
+        return JSON.parse(JSON.stringify(response[0]));
     },
 
     
@@ -101,6 +107,7 @@ Alpine.data('main',()=>({
     create_order(){
         this.current_order = new_order();
         this.current_special_order = new_special_order();
+        this.overlay_type = (this.page == 'view')? 'order':'special_order';
         this.overlay = true;
         this.editing = true;
     },
@@ -113,13 +120,14 @@ Alpine.data('main',()=>({
         this.editing = false;
     },
     open_overlay(order: Order){
+        this.overlay_type = 'order';
         this.overlay = true;
         this.current_order = JSON.parse(JSON.stringify(order));
     },
     open_special_overlay(order: SpecialOrder){
+        this.overlay_type = 'special_order';
         this.overlay = true;
         this.current_special_order = JSON.parse(JSON.stringify(order));
-        console.log(JSON.parse(JSON.stringify(this.current_special_order)));
     },
     edit_order(_order: Order){
         this.page = 'edit';
@@ -161,7 +169,7 @@ Alpine.data('main',()=>({
         if (!window.localStorage.getItem('pocketbase_auth')){
             this.page = 'login';
             return
-        }
+        };
         this.current_special_order = new_special_order();
         this.current_order = new_order();
         this.update_orders();

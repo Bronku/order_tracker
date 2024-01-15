@@ -10,8 +10,8 @@ export async function get_orders(client: PocketBase, filter: string){
         return(JSON.parse(JSON.stringify(
             await client.collection('cake_orders').getFullList({filter:filter}))))
     else
-    return(JSON.parse(JSON.stringify(
-        await client.collection('cake_orders').getFullList())))
+        return(JSON.parse(JSON.stringify(
+            await client.collection('cake_orders').getFullList())))
 }
 
 export async function get_cakes(client : PocketBase){

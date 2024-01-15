@@ -18,7 +18,8 @@ export type Order = {
     date: string,
     additional_info: string,
     status: string, //'zamówione' | 'w trakcie' | 'gotowe' | 'dostarczone'
-    cakes: Cake[]
+    cakes: Cake[],
+    field: any
 }
 
 export type SpecialOrder = {
@@ -84,7 +85,8 @@ export function new_order(){
         additional_info : '',
         price : 0,
         status : 'zamówione',
-        cakes : []
+        cakes : [],
+        field: null 
     }
 }
 export function get_price(order: Order){

@@ -135,10 +135,10 @@
         x-transition:leave-end="move-right">
         <header>
             <a class = "nav-button" x-on:click.prevent = "hide_overlay()"><box-icon name='x'></box-icon></a>
-            <h2 x-show = "page === 'view'"><span x-text = "current_order.id||'nowe zamówienie'"></span></h2>
-            <h2 x-show = "page === 'special_orders'"><span x-text = "current_special_order.id||'nowe zamówienie'"></span></h2>
+            <h2 x-show = "overlay_type === 'order'"><span x-text = "current_order.id||'nowe zamówienie'"></span></h2>
+            <h2 x-show = "overlay_type === 'special_order'"><span x-text = "current_special_order.id||'nowe zamówienie'"></span></h2>
         </header>
-        <main x-show = "page === 'view'">
+        <main x-show = "overlay_type === 'order'">
             <div class = "main-info">
                 <div class = "text-info">
                     <h3>Imię</h3>
@@ -192,6 +192,10 @@
                     <span x-show = "editing == false" x-text = "current_order.additional_info"></span>
                     <textarea x-show = "editing == true" x-model = "current_order.additional_info"></textarea>
                 </div>
+                <div x-on:click = "open_special_overlay(await get_special_order_by_id(current_order.field))" class = "text-info" x-show = "current_order.field != null && current_order.field != ''">
+                    <h3>Tort</h3>
+                    <span x-text = "current_order.field"></span>
+                </div>
             </div>
             <div class = "order-contents" x-show = "current_order.cakes != null">
                 <div class="available-cakes" x-show = "editing == true">
@@ -218,7 +222,7 @@
                 </div>
             </div>
         </main>
-        <main x-show = "page === 'special_orders'">
+        <main x-show = "overlay_type === 'special_order'">
             <div class = "main-info">
                 <div class = "text-info">
                     <h3>Imię</h3>
@@ -329,18 +333,18 @@
                     <span x-show = "editing == false" x-text = "current_special_order.decoration"></span>
                     <input x-show = "editing == true" type = "text" x-model = "current_special_order.decoration">
                 </div>
-                <div x-on:click = "get_order_by_id(current_special_order.id)" class = "text-info" x-show = "current_special_order.field != null">
+                <div x-on:click = "open_overlay(await get_order_by_id(current_special_order.field))" class = "text-info" x-show = "current_special_order.field != null && current_special_order.field != ''">
                     <h3>Ciasta</h3>
                     <span x-text = "current_special_order.field"></span>
                 </div>
             </div>
         </main>
-        <footer x-show = "page === 'view'">
+        <footer x-show = "overlay_type === 'order'">
             <a class = "nav-button" x-on:click.prevent = "save_order()" x-show = "editing == true"><box-icon name='save'></box-icon></a>
             <a class = "nav-button"  x-on:click.prevent = "editing = !editing"><box-icon name='edit'></box-icon></a>
             <a class = "nav-button" x-on:click.prevent = "delete_order(current_order)"><box-icon name='trash' ></box-icon></a>
         </footer>
-        <footer x-show = "page === 'special_orders'">
+        <footer x-show = "overlay_type === 'special_order'">
             <a class = "nav-button" x-on:click.prevent = "save_special_order()" x-show = "editing == true"><box-icon name='save'></box-icon></a>
             <a class = "nav-button"  x-on:click.prevent = "editing = !editing"><box-icon name='edit'></box-icon></a>
             <a class = "nav-button" x-on:click.prevent = "delete_special_order(current_special_order)"><box-icon name='trash' ></box-icon></a>
