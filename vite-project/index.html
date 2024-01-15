@@ -254,6 +254,11 @@
                     <input x-show = "editing == true" type = "text" x-model = "current_special_order.price">
                 </div>
                 <div class = "text-info">
+                    <h3>Zaliczka</h3>
+                    <span x-show = "editing == false" x-text = "current_special_order.advance"></span>
+                    <input x-show = "editing == true" type = "text" x-model = "current_special_order.advace">
+                </div>
+                <div class = "text-info">
                     <h3>Data odbioru</h3>
                     <span x-show = "editing == false" x-text= "current_special_order.date"></span>
                     <input type = "date" x-show = "editing == true" x-model = "current_special_order.date">
@@ -276,6 +281,16 @@
             </div>
             <div class = "main-info">
                 <div class = "text-info">
+                    <h3>Rodzaj</h3>
+                    <span x-show = "editing == false" x-text = "current_special_order.type"></span>
+                    <select x-show = "editing == true" x-model = "current_special_order.type">
+                        <option value="tradycyjny">tradycyjny</option>
+                        <option value = "musowy, glazura">musowy, glazura</optin>
+                        <option value = "musowy, zamsz">musowy, zamsz</option>
+                        <option value = "bezowy">bezowy</option>
+                    </select>
+                </div>
+                <div class = "text-info">
                     <h3>Smak</h3>
                     <span x-show = "editing == false" x-text = "current_special_order.flavour"></span>
                     <input x-show = "editing == true" type = "text" x-model = "current_special_order.flavour">
@@ -296,7 +311,7 @@
                     <select x-show = "editing == true" x-model="current_special_order.coating">
                         <option value="smietana">smietana</option>
                         <option value="masa">masa</option>
-                        <option value="drip">drip</option>
+                        <option value="tynk">tynk</option>
                     </select>
                 </div>
                 <div class = "text-info">
@@ -313,6 +328,10 @@
                     <h3>Dekoracje</h3>
                     <span x-show = "editing == false" x-text = "current_special_order.decoration"></span>
                     <input x-show = "editing == true" type = "text" x-model = "current_special_order.decoration">
+                </div>
+                <div x-on:click = "get_order_by_id(current_special_order.id)" class = "text-info" x-show = "current_special_order.field != null">
+                    <h3>Ciasta</h3>
+                    <span x-text = "current_special_order.field"></span>
                 </div>
             </div>
         </main>

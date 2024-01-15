@@ -41,6 +41,8 @@ export type SpecialOrder = {
     decoration : string,
     shape : string,
     image : string,   
+    type: string,
+    field: any
 }
 
 export function new_special_order(){
@@ -64,6 +66,8 @@ export function new_special_order(){
         decoration : '',
         shape : '',
         image : '',   
+        type : '',
+        field : null
     }
 }
 

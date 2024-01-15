@@ -49,7 +49,11 @@ Alpine.data('main',()=>({
             for (const cake of order.cakes)
                 this.summary.find(e=>e.id == cake.id)!.quantity += +cake.quantity;
         }
-
+    },
+    async get_order_by_id(id: string){
+        let filter = pb.filter ("id = {:id}", {id: id});
+        const response = await get_orders(pb, filter);
+        console.log(response);
     },
 
     
@@ -115,6 +119,7 @@ Alpine.data('main',()=>({
     open_special_overlay(order: SpecialOrder){
         this.overlay = true;
         this.current_special_order = JSON.parse(JSON.stringify(order));
+        console.log(JSON.parse(JSON.stringify(this.current_special_order)));
     },
     edit_order(_order: Order){
         this.page = 'edit';

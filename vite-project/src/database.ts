@@ -35,8 +35,8 @@ export async function get_special_orders(client: PocketBase, filter : string){
         return(JSON.parse(JSON.stringify(
             await client.collection('special_orders').getFullList({filter:filter}))))
     else
-    return(JSON.parse(JSON.stringify(
-        await client.collection('special_orders').getFullList())))
+        return(JSON.parse(JSON.stringify(
+            await client.collection('special_orders').getFullList())))
 }
 
 
